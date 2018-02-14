@@ -17,6 +17,7 @@ do
        echo $apixukey | cat > /tmp/apixukey;;
     h) printf "Why look out of the window when you can check the weather on your computer without leaving the console?\n"
        printf "Default location: Poznan. Run the script with -l [ARG] to set your own location.\n"
+       printf "Run the script with -k [ARG] to add your apixu.com key to a temp file.\n"
        printf "Run the script with -e for extra weather advice.\n"
        exit
     esac
