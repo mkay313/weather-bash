@@ -7,12 +7,13 @@
 command -v jq >/dev/null 2>&1 || { echo >&2 "jq needs to be installed for this script to work. Try: sudo apt-get install jq"; }
 
 #passing the options
-while getopts l:ek:h option
+while getopts l:efk:h option
 do
     case "${option}"
     in
     l) locationname=${OPTARG};;
     e) easteregg="true";;
+    f) forecast="true";;
     k) apixukey=${OPTARG}
        echo $apixukey | cat > /tmp/apixukey;;
     h) printf "Why look out of the window when you can check the weather on your computer without leaving the console?\n"
@@ -23,7 +24,7 @@ do
     esac
 done
 
-#checks if apixukey exists in a file in /tm
+#checks if apixukey exists in a file in /tmp
 if [ ! -f /tmp/apixukey ]; then
     printf "/tmp/apixukey not found.\n"
     printf "Register at apixu.com to get a key, then run this script with -k [KEY] to save your key.\n"
@@ -38,11 +39,12 @@ currentlocation=$(echo $locationname)
 
 #putting the key & location together
 key=$(cat /tmp/apixukey)
-apicall=http://api.apixu.com/v1/current.json?key=$key\&q=$locationname
+apicall=http://api.apixu.com/v1/current.json?key=$key\&q=$locationname\&days=7
 
 #get the weather data
 curl --silent $apicall | jq '.' | cat > /tmp/weathertmp
-   
+
+#save the info, getting rid of the ""   
 cityname=$(cat /tmp/weathertmp | jq '.location | .name' | tr -d '""')
 conditions=$(cat /tmp/weathertmp | jq '.current | .condition | .text' | tr -d '""')
 localtime=$(cat /tmp/weathertmp | jq '.location | .localtime' | tr -d '""')
@@ -70,11 +72,17 @@ printf "The day is %s long\n" "$daylength"
 printf "Temperature: %sC, feels like: %sC\n" "$temp" "$feelslike"
 printf "Wind speed: %s kmph\n" "$windspeed"
 
+for ((i=0; i<=6; i++))
+do
+    conditions=$(cat /tmp/weathertmp | jq '.forecast | .forecastday[0]')
+    printf "Conditions: %s\n" "$conditions"
+done
+
 #easteregg
-    if [[ $easteregg = "true" ]]; then
-        temp_formatted=$(echo ${temp%.*}) #this is magic: you don't want the temp to be a float in bash
-        if [[ temp_formatted -lt 10 ]]; then printf "Too cold, don't go outside.\n"
-        elif [[ temp_formatted -gt 25 ]]; then printf "Too hot, don't go outside.\n"
-        else printf "It's fine outside, but do you r e a l l y want to leave your computer home alone? :(\n"
-        fi
+if [[ $easteregg = "true" ]]; then
+    temp_formatted=$(echo ${temp%.*}) #this is magic: you don't want the temp to be a float in bash
+    if [[ temp_formatted -lt 10 ]]; then printf "Too cold, don't go outside.\n"
+    elif [[ temp_formatted -gt 25 ]]; then printf "Too hot, don't go outside.\n"
+    else printf "It's fine outside, but do you r e a l l y want to leave your computer home alone? :(\n"
     fi
+fi
