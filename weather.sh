@@ -68,7 +68,7 @@ daylength=$(cat /tmp/daytemp | jq '. | .results | .day_length' | tr -d '""')
 printf "W E A T H E R  N O W\n"
 printf "Location: %s  Conditions: %s\n" "$cityname" "$conditions"
 printf "Time: %s\n" "$localtime"
-printf "The sun rises at %s and sets at %s UTC\n" "$sunrise" "$sunset"
+printf "The sun rises at %s and sets at %s\n" "$sunrise" "$sunset"
 printf "The day is %s long\n" "$daylength"
 printf "Temperature: %sC, feels like: %sC\n" "$temp" "$feelslike"
 printf "Wind speed: %s kmph\n" "$windspeed"
