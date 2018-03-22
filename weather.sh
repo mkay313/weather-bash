@@ -1,5 +1,4 @@
 #TODO: add condition field in your language of choice
-#TODO: add weather forecast support for more days
 
 #!/bin/bash
 
@@ -11,23 +10,30 @@ while getopts l:efk:h option
 do
   case "${option}"
   in
-  l) locationname=${OPTARG};;
-  e) easteregg="true";;
-  f) forecast="true";;
+  l) locationname=${OPTARG}
+    ;;
+  e) easteregg="true"
+    ;;
+  f) forecast="true"
+    ;;
   k) apixukey=${OPTARG}
-    echo $apixukey | cat > /tmp/apixukey;;
+    echo $apixukey | cat > ~/bin/apixukey
+    ;;
   h) printf "Why look out of the window when you can check the weather on your computer without leaving the console?\n"
     printf "Default location: Poznan. Run the script with -l [ARG] to set your own location.\n"
     printf "Run the script with -k [ARG] to add your apixu.com key to a temp file.\n"
     printf "Run the script with -e for extra weather advice.\n"
     printf "Run the script with -f to get the weather forecast for tomorrow.\n"
     exit
+    ;;
+  *) printf "This is not a viable parameter, run with -h for help\n"
+    exit
   esac
 done
 
 #checks if apixukey exists in a file in /tmp
-if [ ! -f /tmp/apixukey ]; then
-  printf "/tmp/apixukey not found.\n"
+if [ ! -f ~/bin/apixukey ]; then
+  printf "/bin/apixukey not found.\n"
   printf "Register at apixu.com to get a key, then run this script with -k [KEY] to save your key.\n"
   exit
 fi
@@ -37,10 +43,10 @@ if [ -z ${locationname+x} ]; then
   locationname=Poznan
 fi
 
-currentlocation=$(echo $locationname)
+locationname=$(echo $locationname | tr " " "_")
 
 #puts the key & location together
-key=$(cat /tmp/apixukey)
+key=$(cat ~/bin/apixukey)
 apicall=http://api.apixu.com/v1/forecast.json?key=$key\&q=$locationname\&days=2
 
 #gets the weather data
