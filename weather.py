@@ -25,4 +25,3 @@ def give_advice():
 
 args = parse_args()
 print(args)
-print(get_data(form_url("2f0115073b344ca7be6194156171611", "Poznan")))
