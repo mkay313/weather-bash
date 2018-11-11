@@ -5,6 +5,7 @@ import argparse
 import json
 import sys
 from urllib.request import urlopen
+import urllib.error
 
 APIXU_BASE_URL = 'https://api.apixu.com/v1/current.json?key='
 APIXU_FILE_NAME = 'apixukey.txt'
@@ -19,8 +20,12 @@ def parse_args():
 def form_url(key, location):
     return APIXU_BASE_URL + key + '&q=' + location
 
-def get_data(url):
-    j = urlopen(url) 
+def get_data(key, location):
+    try:
+        j = urlopen(form_url(key, location))
+    except urllib.error.HTTPError:
+        print("Invalid request. Perhaps your key or location is invalid?")
+        sys.exit(1)
     return json.load(j)
 
 def give_advice():
@@ -31,17 +36,21 @@ def save_key_to_file(key, filename):
         file.write(key)
         file.close()
 
-args = parse_args()
-print(args)
-
-if args.key:
-   save_key_to_file(args.key, APIXU_FILE_NAME)
-else:
+def read_key_from_file(filename):
     try:
         with open(APIXU_FILE_NAME) as file: key = file.read()
     except FileNotFoundError:
         print("Apixu key not found. Try rerunning the script with -k <your apixu key>.")
         sys.exit(1)
+    return key
+
+args = parse_args()
 
 
-
+if args.key:
+   save_key_to_file(args.key, APIXU_FILE_NAME)
+   key = args.key
+else:
+   key = read_key_from_file(APIXU_FILE_NAME)
+    
+print(get_data(key, args.location))
