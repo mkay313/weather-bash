@@ -49,14 +49,32 @@ def read_key_from_file(filename):
         sys.exit(1)
     return key
 
+def print_weather_info(json_data, extra):
+        
+    location = json_data["location"]["name"]
+    location_country = json_data["location"]["country"]
+    temperature_celsius = int(json_data["current"]["temp_c"])
+    feelslike_celsius = int(json_data["current"]["feelslike_c"])
+    weather_condition = json_data["current"]["condition"]["text"]
+    windspeed = json_data["current"]["wind_kph"]
+    sunrise = json_data["forecast"]["forecastday"][0]["astro"]["sunrise"]
+    sunset = json_data["forecast"]["forecastday"][0]["astro"]["sunset"]
+
+    print("Location: {location} in {location_country}, weather condition: {weather_condition}".format(location=location, location_country=location_country, weather_condition=weather_condition)) 
+    print("Temperature: {temperature}C, feels like: {feelslike_temperature}C.".format(temperature=temperature_celsius, feelslike_temperature=feelslike_celsius))
+    print("Wind speed: {windspeed} kmph.".format(windspeed=windspeed))
+    print("The sun rises at {sunrise} and sets at {sunset}".format(sunrise=sunrise, sunset=sunset))
+
+    if extra:
+        give_advice(temperature_celsius)
+
 args = parse_args()
 
 if args.key:
-   save_key_to_file(args.key, APIXU_FILE_NAME)
-   key = args.key
+    save_key_to_file(args.key, APIXU_FILE_NAME)
+    key = args.key
 else:
-   key = read_key_from_file(APIXU_FILE_NAME)
-   
+    key = read_key_from_file(APIXU_FILE_NAME)
+
 json_data = get_data(key, args.location)
-print("The current temperature is {} degrees Celsius.".format(int(json_data["current"]["temp_c"])))
-give_advice(int(json_data["current"]["temp_c"]))
+print_weather_info(json_data, args.e)
