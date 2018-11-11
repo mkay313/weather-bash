@@ -68,6 +68,8 @@ def print_weather_info(json_data, extra):
     if extra:
         give_advice(temperature_celsius)
 
+### run
+
 args = parse_args()
 
 if args.key:
