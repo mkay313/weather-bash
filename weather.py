@@ -7,7 +7,7 @@ import sys
 from urllib.request import urlopen
 import urllib.error
 
-APIXU_BASE_URL = 'https://api.apixu.com/v1/current.json?key='
+APIXU_BASE_URL = 'https://api.apixu.com/v1/forecast.json?key='
 APIXU_FILE_NAME = 'apixukey.txt'
 
 def parse_args():
@@ -28,8 +28,13 @@ def get_data(key, location):
         sys.exit(1)
     return json.load(j)
 
-def give_advice():
-    pass
+def give_advice(temperature_celsius):
+    if temperature_celsius < 10:
+        print("Too cold, don't go outside.")
+    elif temperature_celsius > 25:
+        print("Too hot, don't go outside.")
+    else:
+        print("It's fine outside, but do you really want to leave your computer home alone? :(")
 
 def save_key_to_file(key, filename):
     with open(filename, 'w') as file:
@@ -46,11 +51,12 @@ def read_key_from_file(filename):
 
 args = parse_args()
 
-
 if args.key:
    save_key_to_file(args.key, APIXU_FILE_NAME)
    key = args.key
 else:
    key = read_key_from_file(APIXU_FILE_NAME)
-    
-print(get_data(key, args.location))
+   
+json_data = get_data(key, args.location)
+print("The current temperature is {} degrees Celsius.".format(int(json_data["current"]["temp_c"])))
+give_advice(int(json_data["current"]["temp_c"]))

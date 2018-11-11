@@ -1,7 +1,7 @@
 
 #imports
 import unittest
-from weather import form_url, save_key_to_file
+from weather import form_url, save_key_to_file, read_key_from_file
 
 APIXU_BASE_URL = 'https://api.apixu.com/v1/current.json?key='
 
