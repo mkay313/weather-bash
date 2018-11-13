@@ -51,7 +51,7 @@ def get_weather_info(data_list, arg, *args):
         try:
             d = d.get(a)
         except AttributeError:
-            d = d[0]
+            d = d[0] # this is ugly but that's how I handle the fact that in the middle of a dict there's a list ¯\_(ツ)_/¯ 
             d = d.get(a)
     return(d) 
 
