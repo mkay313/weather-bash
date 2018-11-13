@@ -1,17 +1,26 @@
 #imports
 import unittest
-from weather import form_url, save_key_to_file
+import requests
+from weather import form_url, save_key_to_file, get_data
+from nose.tools import assert_is_not_none 
 
 class WeatherTestCase(unittest.TestCase):
-    """Tests for `weather.py`."""
+    """Tests for weather.py"""
+
+    APIKEY = "somekey"
+    APICALL_URL = "https://apicallurl.domain/something/more"
 
     def test_url_formation(self):
-        self.assertEqual(form_url("2f0115073b344ca7be6194156171611", "Poznan"), "https://api.apixu.com/v1/forecast.json?key=2f0115073b344ca7be6194156171611&q=Poznan") 
+        self.assertEqual(form_url(APIKEY, "Poznan"), APICALL_URL) 
 
     def test_save_key_to_file(self):
         save_key_to_file("magic_key", "file.txt")
         with open('file.txt') as file: key = file.read()
         self.assertEqual("magic_key", key)
+
+    def test_request_response(self):
+        response = get_data(APIKEY, "Poznan")
+        assert_is_not_none(response)
 
 if __name__ == '__main__':
     unittest.main()
