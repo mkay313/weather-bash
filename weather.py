@@ -21,8 +21,11 @@ def form_url(key, location):
     return(APIXU_BASE_URL + key + '&q=' + location)
 
 def get_data(key, location):
-    j = requests.get(form_url(key, location))
-    return(json.loads(j.text))
+    response = requests.get(form_url(key, location))
+    if response.ok:
+        return(json.loads(response.text))
+    else:
+        return None
 
 def give_advice(temperature_celsius):
     if temperature_celsius < 10:
