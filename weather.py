@@ -68,19 +68,23 @@ else:
 
 data_list = get_data(key, args.location)
 
-location = get_weather_info(data_list, 'location', 'name')
-location_country = get_weather_info(data_list, 'location', 'country')
-temperature_celsius = get_weather_info(data_list, 'current', 'temp_c')
-feelslike_celsius = get_weather_info(data_list, 'current', 'feelslike_c')
-weather_condition = get_weather_info(data_list, 'current', 'condition', 'text')
-windspeed = get_weather_info(data_list, 'current', 'wind_kph')
-sunrise = get_weather_info(data_list, 'forecast', 'forecastday', 'astro', 'sunrise')
-sunset = get_weather_info(data_list, 'forecast', 'forecastday', 'astro', 'sunset')
+if data_list is not None:
+    location = get_weather_info(data_list, 'location', 'name')
+    location_country = get_weather_info(data_list, 'location', 'country')
+    temperature_celsius = get_weather_info(data_list, 'current', 'temp_c')
+    feelslike_celsius = get_weather_info(data_list, 'current', 'feelslike_c')
+    weather_condition = get_weather_info(data_list, 'current', 'condition', 'text')
+    windspeed = get_weather_info(data_list, 'current', 'wind_kph')
+    sunrise = get_weather_info(data_list, 'forecast', 'forecastday', 'astro', 'sunrise')
+    sunset = get_weather_info(data_list, 'forecast', 'forecastday', 'astro', 'sunset')
 
-print("Location: {location} in {location_country}, weather condition: {weather_condition}".format(location=location, location_country=location_country, weather_condition=weather_condition)) 
-print("Temperature: {temperature}C, feels like: {feelslike_temperature}C.".format(temperature=temperature_celsius, feelslike_temperature=feelslike_celsius))
-print("Wind speed: {windspeed} kmph.".format(windspeed=windspeed))
-print("The sun rises at {sunrise} and sets at {sunset}".format(sunrise=sunrise, sunset=sunset))
+    print("Location: {location} in {location_country}, weather condition: {weather_condition}".format(location=location, location_country=location_country, weather_condition=weather_condition)) 
+    print("Temperature: {temperature}C, feels like: {feelslike_temperature}C.".format(temperature=temperature_celsius, feelslike_temperature=feelslike_celsius))
+    print("Wind speed: {windspeed} kmph.".format(windspeed=windspeed))
+    print("The sun rises at {sunrise} and sets at {sunset}".format(sunrise=sunrise, sunset=sunset))
 
-if args.e:
-    give_advice(temperature_celsius)
+    if args.e:
+        give_advice(temperature_celsius)
+
+else:
+    print("Invalid request, try again.") 
