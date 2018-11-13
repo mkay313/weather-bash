@@ -18,11 +18,11 @@ parser.add_argument('-k', '--key', help="set apixu key")
 args = parser.parse_args()
 
 def form_url(key, location):
-    return APIXU_BASE_URL + key + '&q=' + location
+    return(APIXU_BASE_URL + key + '&q=' + location)
 
 def get_data(key, location):
     j = requests.get(form_url(key, location))
-    return json.loads(j.text)
+    return(json.loads(j.text))
 
 def give_advice(temperature_celsius):
     if temperature_celsius < 10:
@@ -43,7 +43,7 @@ def read_key_from_file(filename):
     except FileNotFoundError:
         print("Apixu key not found. Try rerunning the script with -k <your apixu key>.")
         sys.exit(1)
-    return key
+    return(key)
 
 def get_weather_info(data_list, arg, *args):
     d = data_list.get(arg)
