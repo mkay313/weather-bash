@@ -5,6 +5,7 @@ import argparse
 import json
 import requests
 import sys
+import objectpath
 
 #"constants"
 APIXU_BASE_URL = 'https://api.apixu.com/v1/forecast.json?key='
@@ -48,15 +49,9 @@ def read_key_from_file(filename):
         sys.exit(1)
     return(key)
 
-def get_weather_info(data_list, arg, *args):
-    d = data_list.get(arg)
-    for a in args:
-        try:
-            d = d.get(a)
-        except AttributeError:
-            d = d[0] # this is ugly but that's how I handle the fact that in the middle of a dict there's a list ¯\_(ツ)_/¯ 
-            d = d.get(a)
-    return(d) 
+def get_weather_info(data_list, arg):
+    tree = objectpath.Tree(data_list)
+    return(tree.execute(arg)) 
 
 ### run
 
@@ -69,14 +64,14 @@ else:
 data_list = get_data(key, args.location)
 
 if data_list is not None:
-    location = get_weather_info(data_list, 'location', 'name')
-    location_country = get_weather_info(data_list, 'location', 'country')
-    temperature_celsius = get_weather_info(data_list, 'current', 'temp_c')
-    feelslike_celsius = get_weather_info(data_list, 'current', 'feelslike_c')
-    weather_condition = get_weather_info(data_list, 'current', 'condition', 'text')
-    windspeed = get_weather_info(data_list, 'current', 'wind_kph')
-    sunrise = get_weather_info(data_list, 'forecast', 'forecastday', 'astro', 'sunrise')
-    sunset = get_weather_info(data_list, 'forecast', 'forecastday', 'astro', 'sunset')
+    location = get_weather_info(data_list, '$.location.name')
+    location_country = get_weather_info(data_list, '$.location.country')
+    temperature_celsius = get_weather_info(data_list, '$.current.temp_c')
+    feelslike_celsius = get_weather_info(data_list, '$.current.feelslike_c')
+    weather_condition = get_weather_info(data_list, '$.current.condition.text')
+    windspeed = get_weather_info(data_list, '$.current.wind_kph')
+    sunrise = get_weather_info(data_list, '$.forecast.forecastday[0].astro.sunrise')
+    sunset = get_weather_info(data_list, '$.forecast.forecastday[0].astro.sunset')
 
     print("Location: {location} in {location_country}, weather condition: {weather_condition}".format(location=location, location_country=location_country, weather_condition=weather_condition)) 
     print("Temperature: {temperature}C, feels like: {feelslike_temperature}C.".format(temperature=temperature_celsius, feelslike_temperature=feelslike_celsius))
